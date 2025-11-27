@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <!-- Подключение стилей -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+</head>
+
+<body>
+    <div class="container">
+    <article class="blog-post">
+            <h2 class="display-5 link-body-emphasis mb-1" _msttexthash="3033836" _msthash="43">Лабораторный пример 2</h2>
+            <p class="blog-post-meta" _msttexthash="3407976" _msthash="44">13 ноября 2025 года, <a href="#"
+                    _istranslated="1">Алина</a></p>
+            <p _msttexthash="263170661" _msthash="45">Подключаем библиотеки, создаём базу данных student.db, создаём таблицу students, очищаем таблицу от имеющихся записей,добавляем новых студентов через faker, выводим список в терминал. </p>
+            <hr> 
+    <pre><code class="language-python">
+import sqlite3
+import random
+
+def generate_students_data(count=5):
+    """
+    Генерирует случайные данные студентов с учетом пола
+
+    Args:
+        count (int): количество студентов для генерации
+
+    Returns:
+        list: список кортежей с данными студентов (name, age, grade)
+    """
+    # Списки имен и фамилий с учетом пола
+    male_first_names = ["Алексей", "Иван", "Дмитрий", "Сергей", "Андрей", "Михаил", "Владимир", "Павел", "Николай", "Евгений"]
+    female_first_names = ["Мария", "Анна", "Екатерина", "Ольга", "Наталья", "Елена", "Ирина", "Светлана", "Татьяна", "Юлия"]
+    
+    male_last_names = ["Иванов", "Петров", "Сидоров", "Смирнов", "Кузнецов", "Попов", "Васильев", "Михайлов", "Новиков", "Федоров"]
+    female_last_names = ["Иванова", "Петрова", "Сидорова", "Смирнова", "Кузнецова", "Попова", "Васильева", "Михайлова", "Новикова", "Федорова"]
+    
+    # Возможные оценки
+    grades = ["A", "B", "C", "D"]
+    
+    students_data = []
+    
+    for _ in range(count):
+        # Сначала генерируем пол
+        gender = random.choice(['male', 'female'])
+        
+        # Выбираем имя и фамилию в зависимости от пола
+        if gender == 'male':
+            first_name = random.choice(male_first_names)
+            last_name = random.choice(male_last_names)
+        else:
+            first_name = random.choice(female_first_names)
+            last_name = random.choice(female_last_names)
+        
+        name = f"{last_name} {first_name}"
+        
+        # Генерация случайного возраста
+        age = random.randint(18, 25)
+        
+        # Генерация случайной оценки
+        grade = random.choice(grades)
+        
+        students_data.append((name, age, grade))
+    
+    return students_data
+
+
+print(students_data)
+
+# Подключение к базе данных
+connection = sqlite3.connect('students.db')
+
+# Создание курсора для выполнения SQL-запросов
+cursor = connection.cursor()
+
+# Не забудьте закрыть соединение после работы
+
+# Создание таблицы студентов - вставьте ПОСЛЕ создания cursor,
+# но ДО connection.close()
+create_table_query = '''
+CREATE TABLE IF NOT EXISTS students (
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+name TEXT NOT NULL,
+age INTEGER,
+grade TEXT
+);
+'''
+
+cursor.execute(create_table_query)
+connection.commit()
+
+
+# Удаление всех записей из таблицы (осторожно!) -
+cursor.execute("DELETE FROM students")
+connection.commit()
+
+# Insert a record into the Students table
+insert_query = '''
+INSERT INTO students (name, age, grade)
+VALUES (?, ?, ?);
+'''
+import random
+
+def generate_students_data(count=5):
+    """
+    Генерирует случайные данные студентов с учетом пола
+
+    Args:
+        count (int): количество студентов для генерации
+
+    Returns:
+        list: список кортежей с данными студентов (name, age, grade)
+    """
+    # Списки имен и фамилий с учетом пола
+    male_first_names = ["Алексей", "Иван", "Дмитрий", "Сергей", "Андрей", "Михаил", "Владимир", "Павел", "Николай", "Евгений"]
+    female_first_names = ["Мария", "Анна", "Екатерина", "Ольга", "Наталья", "Елена", "Ирина", "Светлана", "Татьяна", "Юлия"]
+    
+    male_last_names = ["Иванов", "Петров", "Сидоров", "Смирнов", "Кузнецов", "Попов", "Васильев", "Михайлов", "Новиков", "Федоров"]
+    female_last_names = ["Иванова", "Петрова", "Сидорова", "Смирнова", "Кузнецова", "Попова", "Васильева", "Михайлова", "Новикова", "Федорова"]
+    
+    # Возможные оценки
+    grades = ["A", "B", "C", "D"]
+    
+    students_data = []
+    
+    for _ in range(count):
+        # Сначала генерируем пол
+        gender = random.choice(['male', 'female'])
+        
+        # Выбираем имя и фамилию в зависимости от пола
+        if gender == 'male':
+            first_name = random.choice(male_first_names)
+            last_name = random.choice(male_last_names)
+        else:
+            first_name = random.choice(female_first_names)
+            last_name = random.choice(female_last_names)
+        
+        name = f"{last_name} {first_name}"
+        
+        # Генерация случайного возраста
+        age = random.randint(18, 25)
+        
+        # Генерация случайной оценки
+        grade = random.choice(grades)
+        
+        students_data.append((name, age, grade))
+    
+    return students_data
+
+# Пример использования:
+students_data = generate_students_data(5)
+
+# Execute the query for multiple records
+cursor.executemany(insert_query, students_data)
+
+# Commit the changes
+connection.commit()
+
+# Выбор ВСЕХ записей ДО connection.close()
+cursor.execute("SELECT * FROM students")
+all_students = cursor.fetchall()
+print(type(all_students))
+
+# Вывод результатов
+for student in all_students:
+    print(f"ID: {student[0]}, Имя: {student[1]}, Возраст: {student[2]}, Оценка: {student[3]}")
+
+connection.close()
+import sqlite3
+import piplite
+
+await piplite.install("faker")
+from faker import Faker
+
+# Подключение к базе данных
+connection = sqlite3.connect('students.db')
+
+# Создание курсора для выполнения SQL-запросов
+cursor = connection.cursor()
+
+# Не забудьте закрыть соединение после работы
+
+# Создание таблицы студентов - вставьте ПОСЛЕ создания cursor,
+# но ДО connection.close()
+create_table_query = '''
+CREATE TABLE IF NOT EXISTS students (
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+name TEXT NOT NULL,
+age INTEGER,
+grade TEXT
+);
+'''
+
+cursor.execute(create_table_query)
+connection.commit()
+
+
+# Удаление всех записей из таблицы (осторожно!) -
+cursor.execute("DELETE FROM students")
+connection.commit()
+
+# Insert a record into the Students table
+insert_query = '''
+INSERT INTO students (name, age, grade)
+VALUES (?, ?, ?);
+'''
+students_data = [
+    (
+        fake_ru.name(),
+        fake_ru.random_int(min=18, max=25),
+        fake_ru.random_element(["A", "B", "C", "D"])
+    )
+    for _ in range(5)]
+
+# Execute the query for multiple records
+cursor.executemany(insert_query, students_data)
+
+# Commit the changes
+connection.commit()
+
+# Выбор ВСЕХ записей ДО connection.close()
+cursor.execute("SELECT * FROM students")
+all_students = cursor.fetchall()
+print(type(all_students))
+
+# Вывод результатов
+for student in all_students:
+    print(f"ID: {student[0]}, Имя: {student[1]}, Возраст: {student[2]}, Оценка: {student[3]}")
+
+connection.close()
+</code></pre>
+
+<img src="/2.png" class="img-fluid" alt="1">
+    </article>
+    </div>
+        <!-- Content here -->
+   
+
+    <!-- Подключение скрипта до закрывающего тена body -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

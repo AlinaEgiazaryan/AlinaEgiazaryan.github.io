@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <!-- Подключение стилей -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+</head>
+
+<body>
+    <div class="container">
+    <article class="blog-post">
+            <h2 class="display-5 link-body-emphasis mb-1" _msttexthash="3033836" _msthash="43">Лабораторный пример 4</h2>
+            <p class="blog-post-meta" _msttexthash="3407976" _msthash="44">4 декабря 2025 года, <a href="#"
+                    _istranslated="1">Алина</a></p>
+            <p _msttexthash="263170661" _msthash="45">Подключаем библиотеки, создаём базу данных student.db, создаём таблицу students, очищаем таблицу от имеющихся записей,добавляем новых студентов через faker, выводим список в терминал. </p>
+            <hr> 
+    <pre><code class="language-python">
+import sqlite3
+import pandas as pd
+
+# В JupyterLite используем виртуальную базу данных в памяти
+connection = sqlite3.connect(':memory:')
+cursor = connection.cursor()
+print("✅ Создана база данных в памяти")
+
+# Создаем чистые таблицы отдельно
+cursor.execute('CREATE TABLE Пациенты (id INTEGER PRIMARY KEY, имя TEXT)')
+cursor.execute('CREATE TABLE Сессии (id INTEGER PRIMARY KEY, patient_id INTEGER, дата TEXT)')
+
+# Вставляем данные
+patients_data = [
+    (1, 'Анна'),
+    (2, 'Борис'),
+    (3, 'Виктор'),
+    (4, 'Дарья'),
+    (5, 'Елена'),
+    (6, 'Сергей')
+]
+
+sessions_data = [
+    (1, 1, '2024-01-10'),
+    (2, 1, '2024-01-17'),
+    (3, 3, '2024-01-15'),
+    (4, 5, '2024-01-20'),
+    (5, None, '2024-01-18'),
+    (6, 8, '2024-01-22')
+]
+
+cursor.executemany("INSERT INTO Пациенты VALUES (?, ?)", patients_data)
+cursor.executemany("INSERT INTO Сессии VALUES (?, ?, ?)", sessions_data)
+connection.commit()
+
+# Выполняем исходный запрос
+original_query = """
+SELECT Пациенты.id, Пациенты.имя
+FROM Пациенты
+LEFT JOIN Сессии ON Пациенты.id = Сессии.patient_id
+WHERE Сессии.patient_id IS NULL
+"""
+
+cursor.execute(original_query)
+result = cursor.fetchall()
+print("\nРезультат запроса:")
+for row in result:
+    print(f"ID: {row[0]}, Имя: {row[1]}")
+
+# Закрытие соединения
+connection.close()
+</code></pre>
+
+<img src="./4.png" class="img-fluid" alt="1">
+    </article>
+    </div>
+        <!-- Content here -->
+   
+
+    <!-- Подключение скрипта до закрывающего тена body -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
